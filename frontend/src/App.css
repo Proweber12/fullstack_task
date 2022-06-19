@@ -1,0 +1,13 @@
+.cell {
+  text-align: center;
+  border-bottom: solid 1px;
+}
+
+.header {
+  text-align: center;
+}
+
+.table-tag {
+  width: 60%;
+  margin: 0 auto;
+}

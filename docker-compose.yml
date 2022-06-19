@@ -1,0 +1,40 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:13.1
+    privileged: true
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: orders
+  backend:
+    build: ./orders
+    privileged: true
+    ports:
+      - 8080:8080
+    command:
+      bash -c "
+      python manage.py migrate &&
+      gunicorn orders.wsgi -b 0.0.0.0:8080"
+    depends_on:
+      - db
+  parser:
+    build: ./parse_app
+    command: python ./run.py
+    depends_on:
+      - backend
+  nginx:
+    build: ./nginx
+    ports:
+      - 8000:80
+    depends_on:
+      - parser
+  frontend:
+    build: ./frontend
+    ports:
+      - 80:80
+    depends_on:
+      - nginx
